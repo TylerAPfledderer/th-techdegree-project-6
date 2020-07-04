@@ -86,6 +86,9 @@ button {
   color: transparent;
   background: var(--color-neutral-light);
   border-radius: 5px;
+
+  /* To allow animation when a letter is "shown" */
+  transition: all 1s;
 }
 
 .space {
@@ -95,6 +98,7 @@ button {
 .show {
   color: #000;
   background-color: #76CE82;
+  transform: rotate(360deg);
 }
 
 /* Keyboard */
@@ -132,6 +136,7 @@ button {
   left: 0;
   right: 0;
   border-radius: 5px;
+  z-index: 10000;
 }
 
 .title {

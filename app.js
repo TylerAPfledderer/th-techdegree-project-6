@@ -15,6 +15,45 @@ let missed = 0; // This counter will max at 5, then the player loses.
 const startGame = document.querySelector(".btn__reset");
 startGame.addEventListener("click", () => {
   overlay.style.display = "none";
+
+  // Run if game is over and the button displays with the name "New Game"
+  if (startGame.textContent === "New Game") {
+    // Remove completion text
+    let completeText = overlay.querySelector("h3");
+    completeText.remove();
+
+    // Reset given phrase
+    const phraseCharacters = document.querySelectorAll("#phrase li");
+    for (i = 0; i < phraseCharacters.length; i++) {
+      phraseCharacters[i].remove();
+    }
+    const phraseArray = getRandomPhraseAsArray(phrases);
+    addPhraseToDisplay(phraseArray);   
+    
+    // Grab new phrase characters
+    letters = document.querySelectorAll('.letter');
+
+    // Reset qwerty
+    const keys = keyboard.querySelectorAll('button');
+    for (j = 0; j < keys.length; j++) {
+      if (keys[j].className === "chosen") {
+        // Remove the style change
+        keys[j].removeAttribute('class');
+        // Allow the key to become clickable again
+        keys[j].disabled = false;
+      }
+    }
+
+    // Reset missed count
+    missed = 0;
+
+    // Reset hearts
+    let lostHeart = document.querySelectorAll(".tries > img[src='images/lostHeart.png']");
+    for (k = 0; k < lostHeart.length; k++) {
+      lostHeart[k].setAttribute("src", "images/liveHeart.png")
+    }
+
+  }
 });
 
 // Set random list of phrases to guess.
@@ -67,7 +106,7 @@ const phraseArray = getRandomPhraseAsArray(phrases);
 addPhraseToDisplay(phraseArray);
 
 // Grab all elements with the class "letter".
-const letters = document.querySelectorAll('.letter');
+let letters = document.querySelectorAll('.letter');
 // To check a guess against the chosen array.
 function checkLetter(button) {
   // To reset the match confirmation every time this fires.
@@ -89,15 +128,40 @@ function checkLetter(button) {
 // Set the score check
 const checkWin = () => {
   // Grab all letters in the phrase with the class "show"
-  const shownLetters = document.querySelectorAll("show");
+  const shownLetters = document.querySelectorAll(".show");
+  console.log(`Shown letters: ${shownLetters.length}`);
+  console.log(`Total letters: ${letters.length}`);
+  let h2 = document.querySelector(".title");
 
-  if (missed === 5) {
-    // if you lose all the hearts, game ends.
-    
-  } else if (shownLetters === letters) {
+  let endText = document.createElement('h3');
+
+  let complete = null;
+
+  if (shownLetters.length === letters.length) {
     // If all letters in the phrase have the class "show" you win!
-    overlay.style.display = "initial";
+    overlay.style.display = "flex";
     overlay.classList.add("win");
+    endText.innerHTML = `
+      Congratulations. You WON! <br> 
+      Try again?
+    `;
+    overlay.insertBefore(endText, startGame);
+    complete = true;
+  }
+  else if (missed === 5) {
+    // if you lose all the hearts, game ends.
+    overlay.style.display = "flex";
+    overlay.classList.add("lose");
+    endText.innerHTML = `
+      Game Over. You lose! <br> 
+      Try again?
+    `;
+    overlay.insertBefore(endText, startGame);
+    complete = true;
+  }
+
+  if (complete) {
+    startGame.textContent = "New Game";
   }
 };
 
@@ -117,9 +181,9 @@ keyboard.addEventListener("click", (event) => {
       missed++;
 
       // Grab the first live heart under the class 'tries'
-      let heart = document.querySelector('.tries');
+      let liveHeart = document.querySelector(".tries > img[src='images/liveHeart.png']");
       // Lose a heart (aka change the heart image to a lost heart).
-      heart.remove();
+      liveHeart.setAttribute("src", "images/lostHeart.png");
     }
   }
   // Check score
