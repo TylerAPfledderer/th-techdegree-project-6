@@ -18,6 +18,9 @@ startGame.addEventListener("click", () => {
 
   // Run if game is over and the button displays with the name "New Game"
   if (startGame.textContent === "New Game") {
+    // Remove completion classes from overlay
+    overlay.classList.remove("win", "lose");
+
     // Remove completion text
     let completeText = overlay.querySelector("h3");
     completeText.remove();
@@ -129,8 +132,6 @@ function checkLetter(button) {
 const checkWin = () => {
   // Grab all letters in the phrase with the class "show"
   const shownLetters = document.querySelectorAll(".show");
-  console.log(`Shown letters: ${shownLetters.length}`);
-  console.log(`Total letters: ${letters.length}`);
   let h2 = document.querySelector(".title");
 
   let endText = document.createElement('h3');
